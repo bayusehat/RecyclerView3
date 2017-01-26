@@ -21,7 +21,11 @@ import id.sch.smktelkom_mlg.learn.recyclerview3.adapter.HotelAdapter;
 import id.sch.smktelkom_mlg.learn.recyclerview3.model.Hotel;
 
 public class MainActivity extends AppCompatActivity {
+    int itemPos;
     public static final int REQUEST_CODE_ADD = 88;
+    public static final String HOTEL = "hotel";
+    public static final String HOTEL = "hotel";
+    public static final int REQUEST_CODE_EDIT = 99;
     ArrayList<Hotel> mlist = new ArrayList<>();
     HotelAdapter mAdapter;
     @Override
@@ -112,6 +116,15 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
 
         }
+
+        @Override
+        public void doEdit(int pos) {
+            itemPos = pos;
+            Intent intent = new Intent(this, InputActivity.class);
+            intent.putExtra(HOTEL,mlist.get(pos));
+            startActivityForResult(intent,REQUEST_CODE_EDIT);
+
+        }
     }
     @Override
     protected void onActivityResult(int requestCode , int resultCode,Intent data)
@@ -120,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == REQUEST_CODE_ADD && resultCode == RESULT_OK)
         {
             Hotel hotel = (Hotel) data.getSerializableExtra(HOTEL);
+            mlist.remove(itemPos);
             mlist.add(hotel);
             mAdapter.notifyDataSetChanged();
         }

@@ -52,12 +52,20 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.ViewHolder> 
         ImageView ivFoto;
         TextView tvJudul;
         TextView tvDeskripsi;
+        Button bEdit;
+        Button bDelete;
+        ImageButton ibFav;
+        ImageButton ibshare;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ivFoto = (ImageView) itemView.findViewById(R.id.imageView);
             tvJudul = (TextView) itemView.findViewById(R.id.textViewJudul);
             tvDeskripsi = (TextView) itemView.findViewById(R.id.textViewDeskripsi);
+            bEdit = (Button) itemView.findViewById(R.id.buttonEdit);
+            bDelete = (Button) itemView.findViewById(R.id.buttonDelete);
+            ibFav = (ImageButton) itemView.findViewById(R.id.buttonFavorite);
+            ibshare = (ImageButton) itemView.findViewById(R.id.buttonShare);
             itemView.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -66,9 +74,37 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.ViewHolder> 
                     mIHotelAdapter.doClick(getAdapterPosition());
                 }
             });
+            bEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mIHotelAdapter.doEdit(getAdapterPosition());
+                }
+            });
+            bDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mIHotelAdapter.doDelete(getAdapterPosition());
+                }
+            });
+            ibFav.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mIHotelAdapter.doFav(getAdapterPosition());
+                }
+            });
+            ibshare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mIHotelAdapter.doShare(getAdapterPosition());
+                }
+            });
         }
     }
     public interface IHotelAdapter{
         void doClick(int pos);
+        void doEdit(int pos);
+        void doDelete(int pos);
+        void doFav(int pos);
+        void doShare(int pos);
     }
 }

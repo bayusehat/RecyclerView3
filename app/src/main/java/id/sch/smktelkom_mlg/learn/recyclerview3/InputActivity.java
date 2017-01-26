@@ -1,7 +1,13 @@
 package id.sch.smktelkom_mlg.learn.recyclerview3;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 public class InputActivity extends AppCompatActivity {
     public static final String HOTEL = "hotel";
@@ -39,6 +45,26 @@ public class InputActivity extends AppCompatActivity {
                         doSave();
                     }
                 });
+        hotel = (Hotel) getIntent().getSerializableExtra(MainActivity.HOTEL);
+        if(hotel!=null)
+        {
+            setTitle("Edit "+hotel.judul);
+            filldata();
+        }
+        else
+        {
+            setTitle("New Hotel");
+        }
+    }
+
+    private void filldata()
+    {
+        etJudul.setText(hotel.judul);
+        etDeskripsi.setText(hotel.deskripsi);
+        etDetail.setText(hotel.detail);
+        etLokasi.setText(hotel.lokasi);
+        uriFoto = Uri.parse(String.valueOf(hotel.foto));
+        ivFoto.setImageURI(uriFoto);
     }
 
     private void doSave(){
