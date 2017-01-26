@@ -127,6 +127,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     @Override
+    public void doDelete(int pos) {
+        itemPos = pos;
+        final Hotel hotel = mlist.get(pos);
+        mlist.remove(itemPos);
+        mAdapter.notifyDataSetChanged();
+        Snackbar.make(findViewById(R.id.fab),hotel.judul+"Terhapus",Snackbar.LENGTH_SHORT)
+                .setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mlist.add(itemPos,hotel);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                })
+                .show();
+    }
+}
+    @Override
     protected void onActivityResult(int requestCode , int resultCode,Intent data)
     {
         super.onActivityResult(requestCode,resultCode,data);
