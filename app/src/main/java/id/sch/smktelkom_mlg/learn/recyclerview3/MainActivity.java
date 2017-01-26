@@ -21,9 +21,12 @@ import id.sch.smktelkom_mlg.learn.recyclerview3.adapter.HotelAdapter;
 import id.sch.smktelkom_mlg.learn.recyclerview3.model.Hotel;
 
 public class MainActivity extends AppCompatActivity {
+    ArrayList<Hotel> mListAll = new ArrayList<>();
+    boolean isFiltered;
+    ArrayList<Integer> mListMapFilter = new ArrayList<>();
+    String mQuery;
     int itemPos;
     public static final int REQUEST_CODE_ADD = 88;
-    public static final String HOTEL = "hotel";
     public static final String HOTEL = "hotel";
     public static final int REQUEST_CODE_EDIT = 99;
     ArrayList<Hotel> mlist = new ArrayList<>();
@@ -125,24 +128,25 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent,REQUEST_CODE_EDIT);
 
         }
+
+        @Override
+        public void doDelete(int pos) {
+            itemPos = pos;
+            final Hotel hotel = mlist.get(pos);
+            mlist.remove(itemPos);
+            mAdapter.notifyDataSetChanged();
+            Snackbar.make(findViewById(R.id.fab),hotel.judul+"Terhapus",Snackbar.LENGTH_LONG)
+                    .setAction("UNDO", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mlist.add(itemPos,hotel);
+                            if(isFiltered) mListAll.add(mListMapFilter.get(itemPos),hotel);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    })
+                    .show();
+        }
     }
-    @Override
-    public void doDelete(int pos) {
-        itemPos = pos;
-        final Hotel hotel = mlist.get(pos);
-        mlist.remove(itemPos);
-        mAdapter.notifyDataSetChanged();
-        Snackbar.make(findViewById(R.id.fab),hotel.judul+"Terhapus",Snackbar.LENGTH_SHORT)
-                .setAction("UNDO", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mlist.add(itemPos,hotel);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                })
-                .show();
-    }
-}
     @Override
     protected void onActivityResult(int requestCode , int resultCode,Intent data)
     {
@@ -150,9 +154,76 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == REQUEST_CODE_ADD && resultCode == RESULT_OK)
         {
             Hotel hotel = (Hotel) data.getSerializableExtra(HOTEL);
-            mlist.remove(itemPos);
             mlist.add(hotel);
+            if(isFiltered) mListAll.add(hotel);
+            doFilter(mQuery);
+        }
+        else if(requestCode == REQUEST_CODE_EDIT && resultCode == RESULT_OK)
+        {
+            Hotel hotel = (Hotel) data.getSerializableExtra(HOTEL);
+            mlist.remove(itemPos);
+            if(isFiltered) mListAll.remove(mListMapFilter.get(itemPos).intValue());
+            mlist.add(itemPos, hotel);
+            if(isFiltered) mListAll.add(mListMapFilter.get(itemPos), hotel);
             mAdapter.notifyDataSetChanged();
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView)
+                MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener()
+                {
+                    @Override
+                    public boolean onQueryTextSubmit(String query)
+                    {
+                        return false;
+                    }
+                    @Override
+                    public boolean onQueryTextChange(String newText)
+                    {
+                        mQuery = newText.toLowerCase();
+                        doFilter(mQuery);
+                        return true;
+                    }
+                });
+        return true;
+    }
+
+    private void doFilter(String mQuery)
+    {
+        if(!isFiltered)
+        {
+            mListAll.clear();
+            mListAll.addAll(mlist);
+            isFiltered=true;
+        }
+        mlist.clear();
+        if(mQuery.isEmpty())
+        {
+            mlist.addAll(mListAll);
+            isFiltered=false;
+        }
+        else
+        {
+            mListMapFilter.clear();
+            for(int i=0;i<=mListAll.size();i++)
+            {
+                Hotel hotel = mListAll.get(i);
+                if(hotel.judul.toLowerCase().contains(query) ||
+                        hotel.deskripsi.toLowerCase().contains(query) ||
+                        hotel.detail.toLowerCase().contains(query))
+                {
+                    mlist.add(hotel);
+                    mListMapFilter.add(i);
+                }
+            }
+        }
+        mAdapter.notifyDataSetChanged();
     }
 }
