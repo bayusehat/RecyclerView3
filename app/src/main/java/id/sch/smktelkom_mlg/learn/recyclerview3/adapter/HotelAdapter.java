@@ -19,10 +19,12 @@ import id.sch.smktelkom_mlg.learn.recyclerview1.model.Hotel;
 public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.ViewHolder> {
     ArrayList<Hotel> hotelList;
 
+    IHotelAdapter mIHotelAdapter;
     public HotelAdapter(ArrayList<Hotel> hotelList) {
-        this.hotelList = hotelList;
-    }
 
+        this.hotelList = hotelList;
+        mIHotelAdapter = (IHotelAdapter) context;
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -32,20 +34,21 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.ViewHolder> 
     }
 
     @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        Hotel hotel = hotelList.get(position);
+        holder.tvJudul.setText(hotel.judul);
+        holder.tvDeskripsi.setText(hotel.deskripsi);
+        holder.ivFoto.setImageURI(Uri.parse(hotel.foto));
+    }
+
+    @Override
     public int getItemCount() {
         if (hotelList != null)
             return hotelList.size();
         return 0;
     }
 
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Hotel hotel = hotelList.get(position);
-        holder.tvJudul.setText(hotel.judul);
-        holder.ivFoto.setImageDrawable(hotel.foto);
-    }
-
-    public class ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivFoto;
         TextView tvJudul;
         TextView tvDeskripsi;
@@ -55,6 +58,17 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.ViewHolder> 
             ivFoto = (ImageView) itemView.findViewById(R.id.imageView);
             tvJudul = (TextView) itemView.findViewById(R.id.textViewJudul);
             tvDeskripsi = (TextView) itemView.findViewById(R.id.textViewDeskripsi);
+            itemView.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    mIHotelAdapter.doClick(getAdapterPosition());
+                }
+            });
         }
+    }
+    public interface IHotelAdapter{
+        void doClick(int pos);
     }
 }

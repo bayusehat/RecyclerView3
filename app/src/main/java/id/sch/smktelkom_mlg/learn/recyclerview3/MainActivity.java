@@ -1,5 +1,6 @@
 package id.sch.smktelkom_mlg.learn.recyclerview3;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -13,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
 
 import id.sch.smktelkom_mlg.learn.recyclerview3.adapter.HotelAdapter;
 import id.sch.smktelkom_mlg.learn.recyclerview3.model.Hotel;
@@ -39,27 +42,34 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new HotelAdapter(mlist);
+        mAdapter = new HotelAdapter(this.mlist);
         recyclerView.setAdapter(mAdapter);
 
         fillData();
+
     }
 
     private void fillData() {
         Resources resources = getResources();
         String[] arjudul = resources.getStringArray(R.array.places);
         String[] arDeskripsi = resources.getStringArray(R.array.place_desc);
+        String[] arDetail = resources.getStringArray(R.array.place_detail);
+        String[] arLokasi = resources.getStringArray(R.array.place_Locations)
         TypedArray a = resources.obtainTypedArray(R.array.places_picture);
         Drawable[] arFoto = new Drawable[a.length()];
 
         for (int i = 0; i < arFoto.length; i++) {
-            arFoto[i] = a.getDrawable(i);
+            int id=a.getResourceId(1,0);
+            arFoto[i] = Drawable.createFromPath(ContentResolver.SCHEME_ANDROID_RESOURCE+"://"
+                    +resources.getResourcePackageName(id)+'/'
+                    +resources.getResourcePackageName(id)+'/'
+                    +resources.getResourcePackageName(id));
         }
 
         a.recycle();
 
         for (int i = 0; i < arjudul.length; i++) {
-            mlist.add(new Hotel(arjudul[i], arDeskripsi[i], arFoto[i]));
+            mlist.add(new Hotel(arjudul[i], arDeskripsi[i],arDetail[i],arLokasi[i], arFoto[i]));
         }
         mAdapter.notifyDataSetChanged();
 
@@ -85,5 +95,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    public class MainActivity extends AppCompatActivity.implements HotelAdapter.IHotelAdapter{
+        public static final String HOTEL = "hotel";
+
+        @Override
+        public void doClick(int pos)
+        {
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra(HOTEL,mlist.get(pos));
+            startActivity(intent);
+
+        }
     }
 }
