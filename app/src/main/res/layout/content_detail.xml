@@ -31,7 +31,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:is="@+id/place_location"
+            android:id="@+id/place_location"
             tools:text="Lokasi"/>
 
     </LinearLayout>

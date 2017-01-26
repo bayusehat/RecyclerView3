@@ -21,6 +21,7 @@ import id.sch.smktelkom_mlg.learn.recyclerview3.adapter.HotelAdapter;
 import id.sch.smktelkom_mlg.learn.recyclerview3.model.Hotel;
 
 public class MainActivity extends AppCompatActivity {
+    public static final int REQUEST_CODE_ADD = 88;
     ArrayList<Hotel> mlist = new ArrayList<>();
     HotelAdapter mAdapter;
     @Override
@@ -34,8 +35,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                goAdd();
             }
         });
 
@@ -49,12 +49,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void goAdd()
+    {
+        startActivityForResult(new Intent(this, InputActivity.class),REQUEST_CODE_ADD);
+    }
+
     private void fillData() {
         Resources resources = getResources();
         String[] arjudul = resources.getStringArray(R.array.places);
         String[] arDeskripsi = resources.getStringArray(R.array.place_desc);
         String[] arDetail = resources.getStringArray(R.array.place_detail);
-        String[] arLokasi = resources.getStringArray(R.array.place_Locations)
+        String[] arLokasi = resources.getStringArray(R.array.place_Locations);
         TypedArray a = resources.obtainTypedArray(R.array.places_picture);
         Drawable[] arFoto = new Drawable[a.length()];
 
@@ -90,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id ==R.id.action_settings) {
             return true;
         }
 
@@ -106,6 +111,17 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(HOTEL,mlist.get(pos));
             startActivity(intent);
 
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode , int resultCode,Intent data)
+    {
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode == REQUEST_CODE_ADD && resultCode == RESULT_OK)
+        {
+            Hotel hotel = (Hotel) data.getSerializableExtra(HOTEL);
+            mlist.add(hotel);
+            mAdapter.notifyDataSetChanged();
         }
     }
 }

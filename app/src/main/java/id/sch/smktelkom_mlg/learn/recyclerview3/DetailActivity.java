@@ -6,11 +6,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import id.sch.smktelkom_mlg.learn.recyclerview3.model.Hotel;
 
 public class DetailActivity extends AppCompatActivity {
+
+    public static final String HOTEL = "hotel";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +30,7 @@ public class DetailActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        Hotel hotel = (Hotel) getIntent().getSerializableExtra(MainActivity."hotel");
+        Hotel hotel = (Hotel) getIntent().getSerializableExtra(MainActivity. HOTEL)
         setTitle(hotel.judul);
         ImageView ivFoto = (ImageView) findViewById(R.id.imageFoto);
         ivFoto.setImageURI(Uri.parse(hotel.foto));
